@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uz" class="dark">
+<html lang="uz">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CEFRdosh Web App</title>
+  <title>CEFRdosh - So'z Boyligi</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS -->
@@ -12,132 +12,103 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      background-color: #0f172a;
-      color: #f8fafc;
+      background-color: #FAF5EB;
+      color: #382D1D;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       user-select: none;
     }
-    .card-flip {
-      perspective: 1000px;
-    }
-    .card-inner {
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-    .card-inner.flipped {
-      transform: rotateY(180deg);
-    }
-    .card-front, .card-back {
-      backface-visibility: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .card-back {
-      transform: rotateY(180deg);
+    .card-base {
+      background: #FFFFFF;
+      border: 1px solid #F0E6D2;
+      box-shadow: 0 6px 20px rgba(180, 150, 100, 0.08);
+      border-radius: 1.75rem;
     }
   </style>
 </head>
-<body class="pb-24 pt-4 px-4 min-h-screen flex flex-col justify-between">
+<body class="pb-24 pt-3 px-4 min-h-screen flex flex-col justify-between">
 
-  <!-- Yuqori Profil va Statistika Paneli -->
-  <header class="bg-slate-800/80 backdrop-blur-md p-3.5 rounded-2xl border border-slate-700/60 shadow-lg flex justify-between items-center sticky top-2 z-20">
-    <div class="flex items-center gap-3">
-      <div id="user-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-black flex items-center justify-center text-lg shadow-md shadow-amber-500/20">
-        J
+  <!-- Yuqori Header Bar -->
+  <header class="flex justify-between items-center mb-3">
+    <button onclick="goBack()" class="flex items-center gap-1.5 bg-[#F3E5C8] text-[#382D1D] px-3.5 py-1.5 rounded-full font-bold text-xs shadow-sm active:scale-95 transition">
+      <i class="fa-solid fa-xmark"></i> Yopish
+    </button>
+    <div class="flex items-center gap-2 font-bold text-xs">
+      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1.5 rounded-full text-[#D97706] shadow-sm">
+        <i class="fa-solid fa-fire text-xs"></i>
+        <span id="user-streak">1</span>
       </div>
-      <div>
-        <h2 id="user-name" class="font-bold text-sm text-slate-100 leading-tight">Jo'rayev</h2>
-        <span id="user-level" class="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md">
-          CEFR A1
-        </span>
-      </div>
-    </div>
-    <div class="flex items-center gap-3 font-bold text-xs">
-      <div class="flex items-center gap-1.5 bg-slate-900/50 px-2.5 py-1.5 rounded-xl border border-slate-700/50 text-orange-400">
-        <i class="fa-solid fa-fire text-orange-500"></i>
-        <span id="user-streak">2 kun</span>
-      </div>
-      <div class="flex items-center gap-1.5 bg-slate-900/50 px-2.5 py-1.5 rounded-xl border border-slate-700/50 text-amber-400">
-        <i class="fa-solid fa-bolt text-amber-400"></i>
-        <span id="user-xp">965 XP</span>
+      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1.5 rounded-full text-[#B45309] shadow-sm">
+        <i class="fa-solid fa-gem text-xs"></i>
+        <span id="user-gems">270</span>
       </div>
     </div>
   </header>
 
-  <!-- Asosiy Modullar Grid -->
-  <main class="my-auto space-y-4 py-4">
-    
-    <div class="grid grid-cols-2 gap-3">
-      
-      <!-- So'z boyligi -->
-      <button onclick="openModule('vocabulary')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-lg mb-2.5">
-          <i class="fa-solid fa-book-bookmark"></i>
-        </div>
-        <h3 class="font-bold text-sm text-slate-100">So'z boyligi</h3>
-        <p class="text-[11px] text-slate-400 mt-0.5">Flashcard & Testlar</p>
+  <!-- Progress Bar & Counter -->
+  <div class="w-full max-w-md mx-auto mb-4 px-1">
+    <div class="flex justify-between items-center mb-1.5 text-xs font-bold text-[#A39274]">
+      <button onclick="prevCard()" class="w-7 h-7 bg-[#F5EBD7] rounded-full flex items-center justify-center text-[#5C4A33] active:scale-95">
+        <i class="fa-solid fa-chevron-left text-[10px]"></i>
       </button>
-
-      <!-- Grammatika -->
-      <button onclick="openModule('grammar')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-lg mb-2.5">
-          <i class="fa-solid fa-spell-check"></i>
-        </div>
-        <h3 class="font-bold text-sm text-slate-100">Grammatika</h3>
-        <p class="text-[11px] text-slate-400 mt-0.5">Qoidalar & Testlar</p>
-      </button>
-
-      <!-- AI Talaffuz -->
-      <button onclick="openModule('pronunciation')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
-        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-lg mb-2.5">
-          <i class="fa-solid fa-microphone"></i>
-        </div>
-        <h3 class="font-bold text-sm text-slate-100">AI Talaffuz</h3>
-        <p class="text-[11px] text-slate-400 mt-0.5">Ovozli tekshiruv</p>
-      </button>
-
-      <!-- AI Suhbatdosh -->
-      <button onclick="openModule('aichat')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-lg mb-2.5">
-          <i class="fa-solid fa-robot"></i>
-        </div>
-        <h3 class="font-bold text-sm text-slate-100">AI Suhbatdosh</h3>
-        <p class="text-[11px] text-slate-400 mt-0.5">Inglizcha muloqot</p>
-      </button>
-
+      <div class="w-full mx-3 bg-[#EFE6D5] h-2.5 rounded-full overflow-hidden">
+        <div id="progress-bar" class="bg-gradient-to-r from-[#D9A036] to-[#B87D1B] h-full transition-all duration-300" style="width: 20%;"></div>
+      </div>
+      <span id="progress-text" class="font-mono text-[#7A6444]">1/5</span>
     </div>
+  </div>
 
-    <!-- Dinamik Modul Oynasi -->
-    <section id="content-area" class="bg-slate-800/95 backdrop-blur-md p-5 rounded-3xl border border-slate-700 shadow-xl hidden transition duration-300">
-      <div class="flex justify-between items-center mb-4 border-b border-slate-700/60 pb-2">
-        <h3 id="module-title" class="font-black text-slate-100 text-sm">Bo'lim</h3>
-        <button onclick="closeModule()" class="w-7 h-7 rounded-full bg-slate-700/60 text-slate-400 hover:text-slate-200 flex items-center justify-center text-xs">
-          <i class="fa-solid fa-xmark"></i>
+  <!-- Asosiy So'z Kartochkasi -->
+  <main class="w-full max-w-md mx-auto my-auto">
+    <div class="card-base p-6 text-center space-y-4 relative min-h-[320px] flex flex-col justify-between">
+      
+      <!-- Yuqori qism: So'z va Ovoz -->
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <span></span>
+          <button onclick="playAudio()" class="w-10 h-10 rounded-full bg-[#FAF5EB] border border-[#F0E6D2] text-[#7A5B22] flex items-center justify-center shadow-sm active:scale-90 transition">
+            <i class="fa-solid fa-volume-high text-sm"></i>
+          </button>
+        </div>
+        <h1 id="card-word" class="text-3xl font-black text-[#382D1D] tracking-tight">agree</h1>
+        <p id="card-pos" class="text-xs font-medium text-[#A39274] italic mt-0.5">verb</p>
+      </div>
+
+      <!-- Tarjima va Misol (Boshida yashirin yoki chiqib turadi) -->
+      <div id="translation-container" class="space-y-2 py-2 border-t border-b border-[#F5EBD7] transition-all">
+        <button id="show-trans-btn" onclick="revealTranslation()" class="px-5 py-2.5 bg-gradient-to-r from-[#D9A036] to-[#B87D1B] text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition mx-auto block">
+          Show translation
+        </button>
+        <div id="translation-content" class="hidden space-y-2">
+          <h2 id="card-translation" class="text-xl font-extrabold text-[#5C4A33]">rozi bo'lmoq</h2>
+          <p id="card-example" class="text-xs text-[#7A6444] font-medium leading-relaxed italic">"I agree with you."<br><span class="not-italic text-[#A39274]">Men siz bilan roziman.</span></p>
+        </div>
+      </div>
+
+      <!-- Pastki Baholash Tugmalari (Bilmadim, Qiyin, Oson) -->
+      <div class="grid grid-cols-3 gap-2 pt-2">
+        <button onclick="answerCard('bilmadim')" class="py-3 px-2 bg-[#E98989] hover:bg-[#E07575] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
+          <span>Bilmadim</span>
+        </button>
+        <button onclick="answerCard('qiyin')" class="py-3 px-2 bg-[#E3B56B] hover:bg-[#D4A355] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
+          <span>Qiyin</span>
+        </button>
+        <button onclick="answerCard('oson')" class="py-3 px-2 bg-[#7AC194] hover:bg-[#68B082] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
+          <span>Oson</span>
         </button>
       </div>
-      <div id="module-body">
-        <!-- Kontent JS orqali yuklanadi -->
-      </div>
-    </section>
 
+    </div>
   </main>
 
-  <!-- Pastki Navigatsiya -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 flex justify-around py-2.5 text-slate-400 font-semibold text-[11px] z-20">
-    <button onclick="closeModule()" class="flex flex-col items-center gap-1 text-amber-400">
-      <i class="fa-solid fa-house text-lg"></i>
+  <!-- Pastki Navigatsiya Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-[#FAF5EB]/95 backdrop-blur-md border-t border-[#EFE6D5] flex justify-around py-2.5 text-[10px] text-[#A39274] font-semibold z-20">
+    <button onclick="goBack()" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
+      <i class="fa-solid fa-chevron-left text-xs"></i>
+      <span>Orqaga</span>
+    </button>
+    <button onclick="goHome()" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
+      <i class="fa-solid fa-house text-sm"></i>
       <span>Bosh sahifa</span>
-    </button>
-    <button onclick="openModule('leaderboard')" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
-      <i class="fa-solid fa-trophy text-lg"></i>
-      <span>Reyting</span>
-    </button>
-    <button onclick="openModule('profile')" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
-      <i class="fa-solid fa-user text-lg"></i>
-      <span>Profil</span>
     </button>
   </nav>
 
