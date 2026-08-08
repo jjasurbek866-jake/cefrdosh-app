@@ -3,114 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CEFRdosh - So'z Boyligi</title>
-  <!-- Telegram Web App SDK -->
+  <title>CEFRdosh - Bosh Sahifa</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      background-color: #FAF5EB;
-      color: #382D1D;
+      background-color: #F7F3EE;
+      color: #2D2318;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       user-select: none;
     }
-    .card-base {
+    .custom-card {
       background: #FFFFFF;
-      border: 1px solid #F0E6D2;
-      box-shadow: 0 6px 20px rgba(180, 150, 100, 0.08);
-      border-radius: 1.75rem;
+      border: 1px solid #EBE1D1;
+      box-shadow: 0 10px 25px rgba(160, 130, 90, 0.06);
+      border-radius: 1.5rem;
     }
   </style>
 </head>
-<body class="pb-24 pt-3 px-4 min-h-screen flex flex-col justify-between">
+<body class="p-4 min-h-screen flex flex-col justify-between max-w-md mx-auto">
 
-  <!-- Yuqori Header Bar -->
-  <header class="flex justify-between items-center mb-3">
-    <button onclick="goBack()" class="flex items-center gap-1.5 bg-[#F3E5C8] text-[#382D1D] px-3.5 py-1.5 rounded-full font-bold text-xs shadow-sm active:scale-95 transition">
-      <i class="fa-solid fa-xmark"></i> Yopish
-    </button>
-    <div class="flex items-center gap-2 font-bold text-xs">
-      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1.5 rounded-full text-[#D97706] shadow-sm">
-        <i class="fa-solid fa-fire text-xs"></i>
-        <span id="user-streak">1</span>
+  <!-- ================= BOSH SAHIFA (HOME) ================= -->
+  <div id="home-view" class="flex flex-col justify-between flex-grow">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center mt-2 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-[#EFE4D4] flex items-center justify-center font-black text-[#8C6D46] text-lg shadow-sm">
+          CD
+        </div>
+        <div>
+          <h1 class="text-base font-black tracking-tight text-[#2D2318]">CEFRdosh</h1>
+          <p class="text-[11px] text-[#9C8B73] font-medium">Lug'at va Bilimlar bazasi</p>
+        </div>
       </div>
-      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1.5 rounded-full text-[#B45309] shadow-sm">
-        <i class="fa-solid fa-gem text-xs"></i>
-        <span id="user-gems">270</span>
+      <div class="flex items-center gap-2 bg-[#EFE4D4]/70 px-3 py-1.5 rounded-2xl">
+        <i class="fa-solid fa-gem text-amber-600 text-xs"></i>
+        <span class="text-xs font-extrabold text-[#735A38]">270</span>
       </div>
     </div>
-  </header>
 
-  <!-- Progress Bar & Counter -->
-  <div class="w-full max-w-md mx-auto mb-4 px-1">
-    <div class="flex justify-between items-center mb-1.5 text-xs font-bold text-[#A39274]">
-      <button onclick="prevCard()" class="w-7 h-7 bg-[#F5EBD7] rounded-full flex items-center justify-center text-[#5C4A33] active:scale-95">
-        <i class="fa-solid fa-chevron-left text-[10px]"></i>
-      </button>
-      <div class="w-full mx-3 bg-[#EFE6D5] h-2.5 rounded-full overflow-hidden">
-        <div id="progress-bar" class="bg-gradient-to-r from-[#D9A036] to-[#B87D1B] h-full transition-all duration-300" style="width: 20%;"></div>
+    <!-- Asosiy Kontent / Status -->
+    <div class="space-y-4 my-auto">
+      
+      <!-- Foydalanuvchi kartasi -->
+      <div class="custom-card p-5 space-y-3 bg-gradient-to-br from-white to-[#FCF9F5]">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#9C8B73]">Bugungi maqsad</span>
+          <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">10 ta so'z</span>
+        </div>
+        <div class="w-full bg-[#EFE4D4] h-2.5 rounded-full overflow-hidden">
+          <div class="bg-[#8C6D46] h-full rounded-full" style="width: 40%;"></div>
+        </div>
+        <div class="flex justify-between text-[11px] font-semibold text-[#9C8B73]">
+          <span>Bajarildi: 4 ta</span>
+          <span>Qoldi: 6 ta</span>
+        </div>
       </div>
-      <span id="progress-text" class="font-mono text-[#7A6444]">1/5</span>
+
+      <!-- Rejimlar menyusi -->
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="startSession()" class="custom-card p-4 text-left space-y-2 hover:border-[#D9C4A9] active:scale-95 transition group">
+          <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-xs text-[#2D2318] group-hover:text-amber-800 transition">So'z yodlash</h3>
+            <p class="text-[10px] text-[#9C8B73]">Kartochkalar orqali</p>
+          </div>
+        </button>
+
+        <button onclick="alert('Tez kunda!')" class="custom-card p-4 text-left space-y-2 hover:border-[#D9C4A9] active:scale-95 transition group opacity-70">
+          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-gamepad"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-xs text-[#2D2318]">Viktorina</h3>
+            <p class="text-[10px] text-[#9C8B73]">Tez orada</p>
+          </div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Pastki qism tugma -->
+    <div class="py-4">
+      <button onclick="startSession()" class="w-full py-3.5 bg-[#3D3023] hover:bg-[#2D2318] text-white font-black text-xs rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-play text-[10px]"></i> Mashqni boshlash
+      </button>
     </div>
   </div>
 
-  <!-- Asosiy So'z Kartochkasi -->
-  <main class="w-full max-w-md mx-auto my-auto">
-    <div class="card-base p-6 text-center space-y-4 relative min-h-[320px] flex flex-col justify-between">
-      
-      <!-- Yuqori qism: So'z va Ovoz -->
+
+  <!-- ================= MASHQ SAHIfASI (CARD VIEW) - Boshida yashirin ================= -->
+  <div id="quiz-view" class="hidden flex-col justify-between flex-grow">
+    
+    <!-- Top Bar -->
+    <header class="flex justify-between items-center mb-4">
+      <button onclick="goHome()" class="flex items-center gap-1.5 bg-[#EFE4D4] text-[#2D2318] px-3.5 py-1.5 rounded-xl font-bold text-xs active:scale-95 transition">
+        <i class="fa-solid fa-house"></i> Bosh sahifa
+      </button>
+      <div class="flex items-center gap-2 font-bold text-xs">
+        <span id="progress-text" class="bg-[#EFE4D4] px-3 py-1.5 rounded-xl text-[#735A38]">1/5</span>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div class="w-full bg-[#EFE4D4] h-2 rounded-full mb-6 overflow-hidden">
+      <div id="progress-bar" class="bg-[#3D3023] h-full transition-all duration-300" style="width: 20%;"></div>
+    </div>
+
+    <!-- Card Container -->
+    <main class="custom-card p-6 text-center space-y-6 my-auto relative flex flex-col justify-between min-h-[300px]">
       <div>
         <div class="flex justify-between items-center mb-2">
           <span></span>
-          <button onclick="playAudio()" class="w-10 h-10 rounded-full bg-[#FAF5EB] border border-[#F0E6D2] text-[#7A5B22] flex items-center justify-center shadow-sm active:scale-90 transition">
-            <i class="fa-solid fa-volume-high text-sm"></i>
+          <button onclick="playAudio()" class="w-9 h-9 rounded-full bg-[#F7F3EE] text-[#594532] flex items-center justify-center shadow-sm active:scale-90 transition">
+            <i class="fa-solid fa-volume-high text-xs"></i>
           </button>
         </div>
-        <h1 id="card-word" class="text-3xl font-black text-[#382D1D] tracking-tight">agree</h1>
-        <p id="card-pos" class="text-xs font-medium text-[#A39274] italic mt-0.5">verb</p>
+        <h2 id="card-word" class="text-3xl font-black text-[#2D2318] tracking-tight">agree</h2>
+        <p id="card-pos" class="text-xs font-medium text-[#9C8B73] italic mt-0.5">verb</p>
       </div>
 
-      <!-- Tarjima va Misol (Boshida yashirin yoki chiqib turadi) -->
-      <div id="translation-container" class="space-y-2 py-2 border-t border-b border-[#F5EBD7] transition-all">
-        <button id="show-trans-btn" onclick="revealTranslation()" class="px-5 py-2.5 bg-gradient-to-r from-[#D9A036] to-[#B87D1B] text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition mx-auto block">
-          Show translation
+      <!-- Tarjima qismi -->
+      <div class="py-2 border-t border-b border-[#F2EBE1]">
+        <button id="show-trans-btn" onclick="revealTranslation()" class="px-5 py-2.5 bg-[#3D3023] text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition mx-auto block">
+          Tarjimani ko'rsatish
         </button>
-        <div id="translation-content" class="hidden space-y-2">
-          <h2 id="card-translation" class="text-xl font-extrabold text-[#5C4A33]">rozi bo'lmoq</h2>
-          <p id="card-example" class="text-xs text-[#7A6444] font-medium leading-relaxed italic">"I agree with you."<br><span class="not-italic text-[#A39274]">Men siz bilan roziman.</span></p>
+        <div id="translation-content" class="hidden space-y-1.5">
+          <h3 id="card-translation" class="text-lg font-extrabold text-[#594532]">rozi bo'lmoq</h3>
+          <p id="card-example" class="text-xs text-[#8C7A5E] font-medium italic">"I agree with you."</p>
         </div>
       </div>
 
-      <!-- Pastki Baholash Tugmalari (Bilmadim, Qiyin, Oson) -->
-      <div class="grid grid-cols-3 gap-2 pt-2">
-        <button onclick="answerCard('bilmadim')" class="py-3 px-2 bg-[#E98989] hover:bg-[#E07575] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
-          <span>Bilmadim</span>
+      <!-- Baholash Tugmalari -->
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="answerCard('bilmadim')" class="py-3 bg-[#E57373] text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition">
+          Bilmadim
         </button>
-        <button onclick="answerCard('qiyin')" class="py-3 px-2 bg-[#E3B56B] hover:bg-[#D4A355] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
-          <span>Qiyin</span>
+        <button onclick="answerCard('qiyin')" class="py-3 bg-[#FFB74D] text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition">
+          Qiyin
         </button>
-        <button onclick="answerCard('oson')" class="py-3 px-2 bg-[#7AC194] hover:bg-[#68B082] text-white font-extrabold text-xs rounded-2xl shadow-sm active:scale-95 transition flex flex-col items-center justify-center gap-0.5">
-          <span>Oson</span>
+        <button onclick="answerCard('oson')" class="py-3 bg-[#81C784] text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition">
+          Oson
         </button>
       </div>
+    </main>
 
+    <!-- Pastki bo'sh joy -->
+    <div class="py-2 text-center">
+      <span class="text-[10px] text-[#B0A18F]">CEFRdosh Platform</span>
     </div>
-  </main>
-
-  <!-- Pastki Navigatsiya Bar -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-[#FAF5EB]/95 backdrop-blur-md border-t border-[#EFE6D5] flex justify-around py-2.5 text-[10px] text-[#A39274] font-semibold z-20">
-    <button onclick="goBack()" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-chevron-left text-xs"></i>
-      <span>Orqaga</span>
-    </button>
-    <button onclick="goHome()" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-house text-sm"></i>
-      <span>Bosh sahifa</span>
-    </button>
-  </nav>
+  </div>
 
   <script src="app.js"></script>
 </body>
