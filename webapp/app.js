@@ -1,3 +1,4 @@
+// Telegram WebApp kengaytirish
 const tg = window.Telegram.WebApp;
 tg.expand();
 
@@ -28,11 +29,12 @@ let currentIndex = 0;
 let totalCardsCount = 0;
 
 // Modullarni ochish (Asosiy sahifadan)
-function openModule(moduleName) {
+window.openModule = function(moduleName) {
   const contentArea = document.getElementById("content-area");
   const moduleTitle = document.getElementById("module-title");
   const moduleBody = document.getElementById("module-body");
 
+  if (!contentArea) return;
   contentArea.classList.remove("hidden");
 
   if (moduleName === 'vocabulary') {
@@ -54,20 +56,23 @@ function openModule(moduleName) {
     contentArea.classList.add("hidden");
     alert("Profil sahifasi");
   }
-}
+};
 
-function closeModule() {
-  document.getElementById("content-area").classList.add("hidden");
-}
+window.closeModule = function() {
+  const contentArea = document.getElementById("content-area");
+  if (contentArea) {
+    contentArea.classList.add("hidden");
+  }
+};
 
-// Unitlar ro'yxatini chiqarish (Siz ko'rsatgan dizayn uslubida)
+// Unitlar ro'yxatini chiqarish
 function renderUnitsList(container) {
   let html = `<div class="space-y-2.5">`;
   
   for (let unitId in unitsData) {
     let unit = unitsData[unitId];
     html += `
-      <div onclick="startUnitQuiz(${unitId})" class="bg-slate-900/60 hover:bg-slate-900 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-95 transition">
+      <div onclick="window.startUnitQuiz(${unitId})" class="bg-slate-900/60 hover:bg-slate-900 p-3.5 rounded-2xl border border-slate-700/60 flex items-center justify-between cursor-pointer active:scale-95 transition">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-black text-sm">
             ${unitId}
@@ -88,13 +93,13 @@ function renderUnitsList(container) {
 }
 
 // Tanlangan Unit so'zlarini boshlash
-function startUnitQuiz(unitId) {
+window.startUnitQuiz = function(unitId) {
   currentSessionWords = [...unitsData[unitId].words];
   retryQueue = [];
   currentIndex = 0;
   totalCardsCount = currentSessionWords.length;
   renderCardQuiz();
-}
+};
 
 // So'z kartochkasi interfeysi
 function renderCardQuiz() {
@@ -114,7 +119,7 @@ function renderCardQuiz() {
           <div class="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto text-xl font-black">🎉</div>
           <h3 class="font-bold text-sm text-slate-100">Unit yakunlandi!</h3>
           <p class="text-xs text-slate-400">Barcha so'zlarni muvaffaqiyatli o'tdingiz.</p>
-          <button onclick="openModule('vocabulary')" class="w-full py-3 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-md active:scale-95 transition">Unitlarga qaytish</button>
+          <button onclick="window.openModule('vocabulary')" class="w-full py-3 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-md active:scale-95 transition">Unitlarga qaytish</button>
         </div>
       `;
       return;
@@ -126,23 +131,20 @@ function renderCardQuiz() {
 
   moduleBody.innerHTML = `
     <div class="space-y-4">
-      <!-- Yuqori progress va ovoz -->
       <div class="flex justify-between items-center">
         <span class="text-[10px] font-bold text-slate-400 uppercase">Kartochka</span>
-        <button onclick="playAudio('${current.word}')" class="w-8 h-8 rounded-full bg-slate-700/60 text-amber-400 flex items-center justify-center text-xs active:scale-90 transition">
+        <button onclick="window.playAudio('${current.word}')" class="w-8 h-8 rounded-full bg-slate-700/60 text-amber-400 flex items-center justify-center text-xs active:scale-90 transition">
           <i class="fa-solid fa-volume-high"></i>
         </button>
       </div>
 
-      <!-- So'z bloki -->
       <div class="text-center py-4 bg-slate-900/40 rounded-2xl border border-slate-700/40 space-y-1">
         <h3 class="text-2xl font-black text-slate-100 tracking-tight">${current.word}</h3>
         <p class="text-xs text-slate-400 italic">${current.pos}</p>
       </div>
 
-      <!-- Tarjima qismi -->
       <div id="trans-box" class="text-center py-3">
-        <button onclick="revealTranslation()" id="show-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs rounded-xl transition mx-auto block">
+        <button onclick="window.revealTranslation()" id="show-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold text-xs rounded-xl transition mx-auto block">
           Tarjimani ko'rsatish
         </button>
         <div id="trans-content" class="hidden space-y-1.5 mt-2">
@@ -151,15 +153,14 @@ function renderCardQuiz() {
         </div>
       </div>
 
-      <!-- Baholash Tugmalari -->
       <div class="grid grid-cols-3 gap-2 pt-2">
-        <button onclick="handleAnswer('bilmadim')" class="py-2.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
+        <button onclick="window.handleAnswer('bilmadim')" class="py-2.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
           Bilmadim
         </button>
-        <button onclick="handleAnswer('qiyin')" class="py-2.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
+        <button onclick="window.handleAnswer('qiyin')" class="py-2.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
           Qiyin
         </button>
-        <button onclick="handleAnswer('oson')" class="py-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
+        <button onclick="window.handleAnswer('oson')" class="py-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 font-bold text-xs rounded-xl active:scale-95 transition">
           Oson
         </button>
       </div>
@@ -167,12 +168,16 @@ function renderCardQuiz() {
   `;
 }
 
-function revealTranslation() {
-  document.getElementById("show-btn").classList.add("hidden");
-  document.getElementById("trans-content").classList.remove("hidden");
-}
+window.revealTranslation = function() {
+  const btn = document.getElementById("show-btn");
+  const content = document.getElementById("trans-content");
+  if (btn && content) {
+    btn.classList.add("hidden");
+    content.classList.remove("hidden");
+  }
+};
 
-function handleAnswer(type) {
+window.handleAnswer = function(type) {
   const currentWord = currentSessionWords[currentIndex];
 
   if (type === 'bilmadim' || type === 'qiyin') {
@@ -183,10 +188,10 @@ function handleAnswer(type) {
 
   currentIndex++;
   renderCardQuiz();
-}
+};
 
-function playAudio(word) {
+window.playAudio = function(word) {
   const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = 'en-US';
   window.speechSynthesis.speak(utterance);
-}
+};
