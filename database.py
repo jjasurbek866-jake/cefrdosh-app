@@ -27,7 +27,7 @@ async def get_or_create_user(telegram_id: int, first_name: str, username: str = 
     res = supabase.table("users").insert(new_user).execute()
     return res.data[0]
 
-async def get_words_by_level(level: str, limit: int = 10):
+async def get_words_by_level(level: str = "A1", limit: int = 10):
     """Belgilangan CEFR darajasi bo'yicha so'zlarni oladi"""
     response = supabase.table("words").select("*").eq("cefr_level", level).limit(limit).execute()
     return response.data
