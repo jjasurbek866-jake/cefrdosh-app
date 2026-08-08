@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CEFRdosh</title>
+  <title>CEFRdosh Web App</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS -->
@@ -12,237 +12,132 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      background-color: #FAF5EB;
-      color: #382D1D;
+      background-color: #0f172a;
+      color: #f8fafc;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       user-select: none;
     }
-    .card-base {
-      background: #FFFFFF;
-      border: 1px solid #F0E6D2;
-      box-shadow: 0 4px 12px rgba(180, 150, 100, 0.06);
-      border-radius: 1.25rem;
+    .card-flip {
+      perspective: 1000px;
+    }
+    .card-inner {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .card-back {
+      transform: rotateY(180deg);
     }
   </style>
 </head>
-<body class="pb-28 pt-3 px-4 min-h-screen flex flex-col justify-between">
+<body class="pb-24 pt-4 px-4 min-h-screen flex flex-col justify-between">
 
-  <!-- Yuqori Header Bar -->
-  <header class="flex justify-between items-center mb-3">
-    <div class="flex items-center gap-2.5">
-      <div class="relative">
-        <div id="user-avatar" class="w-10 h-10 rounded-full bg-[#EBDDBB] text-[#7A5B22] font-black flex items-center justify-center text-base border-2 border-white shadow-sm">
-          J
-        </div>
-        <span id="user-cefr" class="absolute -bottom-1 -left-1 text-[9px] bg-[#8C6D37] text-white font-bold px-1 rounded-md">A1</span>
+  <!-- Yuqori Profil va Statistika Paneli -->
+  <header class="bg-slate-800/80 backdrop-blur-md p-3.5 rounded-2xl border border-slate-700/60 shadow-lg flex justify-between items-center sticky top-2 z-20">
+    <div class="flex items-center gap-3">
+      <div id="user-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-black flex items-center justify-center text-lg shadow-md shadow-amber-500/20">
+        J
       </div>
       <div>
-        <p class="text-[10px] text-[#A39274] font-medium leading-none">Xayrli oqshom ✍️</p>
-        <h2 id="user-fullname" class="font-bold text-sm text-[#382D1D] mt-0.5">Jo'rayev</h2>
+        <h2 id="user-name" class="font-bold text-sm text-slate-100 leading-tight">Jo'rayev</h2>
+        <span id="user-level" class="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md">
+          CEFR A1
+        </span>
       </div>
     </div>
-
-    <div class="flex items-center gap-2 font-bold text-xs">
-      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1 rounded-full text-[#D97706]">
-        <i class="fa-solid fa-fire text-xs"></i>
-        <span id="user-streak">2</span>
+    <div class="flex items-center gap-3 font-bold text-xs">
+      <div class="flex items-center gap-1.5 bg-slate-900/50 px-2.5 py-1.5 rounded-xl border border-slate-700/50 text-orange-400">
+        <i class="fa-solid fa-fire text-orange-500"></i>
+        <span id="user-streak">2 kun</span>
       </div>
-      <div class="flex items-center gap-1 bg-[#F5EBD7] px-2.5 py-1 rounded-full text-[#B45309]">
-        <i class="fa-solid fa-gem text-xs"></i>
-        <span id="user-gems">200</span>
-      </div>
-      <div class="text-[#A39274] text-[11px] font-mono ml-1 flex items-center gap-1">
-        <i class="fa-regular fa-clock"></i> <span>00:00:00</span>
+      <div class="flex items-center gap-1.5 bg-slate-900/50 px-2.5 py-1.5 rounded-xl border border-slate-700/50 text-amber-400">
+        <i class="fa-solid fa-bolt text-amber-400"></i>
+        <span id="user-xp">965 XP</span>
       </div>
     </div>
   </header>
 
-  <!-- Daraja va Kunlik Maqsad Paneli -->
-  <section class="card-base p-4 mb-4 space-y-3">
-    <div class="flex justify-between items-center text-xs">
-      <span id="level-title" class="font-extrabold text-[#5C4A33] tracking-wide">DARAJA 6</span>
-      <span id="total-xp-text" class="text-[11px] text-[#A39274] font-semibold">965 XP</span>
-      <span id="xp-progress-text" class="font-bold text-[#8C6D37]">215 / 300 XP</span>
-    </div>
-
-    <!-- Progress Line -->
-    <div class="w-full bg-[#EFE6D5] h-2.5 rounded-full overflow-hidden">
-      <div id="xp-bar" class="bg-gradient-to-r from-[#D9A036] to-[#B87D1B] h-full transition-all duration-300" style="width: 71%;"></div>
-    </div>
-
-    <!-- Kunlik Maqsad Block -->
-    <div class="pt-2 border-t border-[#F3EAD8] flex items-center gap-3">
-      <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
-        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-          <path class="text-[#EFE6D5]" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path id="goal-circle" class="text-[#D9A036] transition-all duration-300" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-        </svg>
-        <span id="goal-percent" class="absolute text-[10px] font-black text-[#6B5328]">0%</span>
-      </div>
-      <div>
-        <h4 class="text-[10px] font-extrabold text-[#7A6444] uppercase tracking-wider">Kunlik Maqsad</h4>
-        <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px] text-[#8C7A5E] mt-0.5 font-medium">
-          <span>• So'z boyligi <b id="goal-vocab" class="text-[#5C4A33]">0/20</b></span>
-          <span>• Grammatika <b id="goal-grammar" class="text-[#5C4A33]">0/2</b></span>
-          <span>• Tinglash <b id="goal-listen" class="text-[#5C4A33]">0/2</b></span>
-          <span class="text-[#A39274]">• Gapirish <i>Tez kunda</i></span>
-          <span class="text-[#A39274]">• Yozish <i>Tez kunda</i></span>
-          <span>• O'qish <b id="goal-read" class="text-[#5C4A33]">0/2</b></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Asosiy Ko'nikmalar Grid -->
-  <section class="space-y-3 mb-4">
-    <h3 class="font-extrabold text-xs text-[#6E5B42] uppercase tracking-wider px-1">Asosiy Ko'nikmalar</h3>
-
+  <!-- Asosiy Modullar Grid -->
+  <main class="my-auto space-y-4 py-4">
+    
     <div class="grid grid-cols-2 gap-3">
       
       <!-- So'z boyligi -->
-      <div onclick="startModule('vocabulary')" class="card-base p-3.5 flex flex-col justify-between h-28 cursor-pointer hover:border-[#D9A036] active:scale-95 transition">
-        <div class="flex justify-center text-2xl text-[#8C6D37]">
-          <i class="fa-solid fa-boxes-stacked"></i>
+      <button onclick="openModule('vocabulary')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-lg mb-2.5">
+          <i class="fa-solid fa-book-bookmark"></i>
         </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#382D1D]">So'z boyligi</h4>
-          <span class="font-black text-sm text-[#8C6D37]">1%</span>
-        </div>
-        <div class="space-y-1">
-          <p class="text-[9px] text-center text-[#A39274]">EN→UZ 1% • UZ→EN 1%</p>
-          <div class="w-full bg-[#EFE6D5] h-1 rounded-full overflow-hidden">
-            <div class="bg-[#D9A036] h-full w-[1%]"></div>
-          </div>
-        </div>
-      </div>
+        <h3 class="font-bold text-sm text-slate-100">So'z boyligi</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">Flashcard & Testlar</p>
+      </button>
 
       <!-- Grammatika -->
-      <div onclick="startModule('grammar')" class="card-base p-3.5 flex flex-col justify-between h-28 cursor-pointer hover:border-[#D9A036] active:scale-95 transition">
-        <div class="flex justify-center text-2xl text-[#8C6D37]">
-          <i class="fa-solid fa-book-open"></i>
+      <button onclick="openModule('grammar')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-lg mb-2.5">
+          <i class="fa-solid fa-spell-check"></i>
         </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#382D1D]">Grammatika</h4>
-          <span class="font-black text-sm text-[#8C6D37]">1%</span>
-        </div>
-        <div class="space-y-1">
-          <p class="text-[9px] text-center text-[#A39274]">3 / 216</p>
-          <div class="w-full bg-[#EFE6D5] h-1 rounded-full overflow-hidden">
-            <div class="bg-[#D9A036] h-full w-[1%]"></div>
-          </div>
-        </div>
-      </div>
+        <h3 class="font-bold text-sm text-slate-100">Grammatika</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">Qoidalar & Testlar</p>
+      </button>
 
-      <!-- Tinglash -->
-      <div onclick="startModule('listening')" class="card-base !bg-[#EBF5FC] !border-[#D3E8F8] p-3.5 flex flex-col justify-between h-28 cursor-pointer hover:border-[#2563EB] active:scale-95 transition">
-        <div class="flex justify-center text-2xl text-[#2563EB]">
-          <i class="fa-solid fa-headphones"></i>
-        </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#1E3A8A]">Tinglash</h4>
-          <span class="font-black text-sm text-[#2563EB]">0%</span>
-        </div>
-        <div class="space-y-1">
-          <p class="text-[9px] text-center text-[#60A5FA]">0 / 189</p>
-          <div class="w-full bg-[#D3E8F8] h-1 rounded-full overflow-hidden">
-            <div class="bg-[#2563EB] h-full w-[0%]"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gapirish (Tez kunda) -->
-      <div class="card-base !bg-[#FDE8EE] !border-[#FBCFE8] p-3.5 flex flex-col justify-between h-28 opacity-80">
-        <div class="flex justify-center text-2xl text-[#DB2777]">
+      <!-- AI Talaffuz -->
+      <button onclick="openModule('pronunciation')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-lg mb-2.5">
           <i class="fa-solid fa-microphone"></i>
         </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#831843]">Gapirish</h4>
-          <span class="text-[10px] text-[#9D174D] font-medium"><i class="fa-solid fa-lock mr-0.5"></i> Tez kunda</span>
-        </div>
-        <div></div>
-      </div>
+        <h3 class="font-bold text-sm text-slate-100">AI Talaffuz</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">Ovozli tekshiruv</p>
+      </button>
 
-      <!-- Yozish (Tez kunda) -->
-      <div class="card-base !bg-[#F3E8FF] !border-[#E9D5FF] p-3.5 flex flex-col justify-between h-28 opacity-80">
-        <div class="flex justify-center text-2xl text-[#9333EA]">
-          <i class="fa-solid fa-pen-to-square"></i>
+      <!-- AI Suhbatdosh -->
+      <button onclick="openModule('aichat')" class="bg-slate-800/60 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border border-slate-700/60 text-left transition duration-200">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-lg mb-2.5">
+          <i class="fa-solid fa-robot"></i>
         </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#581C87]">Yozish</h4>
-          <span class="text-[10px] text-[#7E22CE] font-medium"><i class="fa-solid fa-lock mr-0.5"></i> Tez kunda</span>
-        </div>
-        <div></div>
-      </div>
-
-      <!-- O'qish -->
-      <div onclick="startModule('reading')" class="card-base !bg-[#ECFDF5] !border-[#A7F3D0] p-3.5 flex flex-col justify-between h-28 cursor-pointer hover:border-[#059669] active:scale-95 transition">
-        <div class="flex justify-center text-2xl text-[#059669]">
-          <i class="fa-solid fa-book"></i>
-        </div>
-        <div class="text-center">
-          <h4 class="font-bold text-xs text-[#065F46]">O'qish</h4>
-          <span class="font-black text-sm text-[#059669]">0%</span>
-        </div>
-        <div class="space-y-1">
-          <p class="text-[9px] text-center text-[#34D399]">0 / 160</p>
-          <div class="w-full bg-[#A7F3D0] h-1 rounded-full overflow-hidden">
-            <div class="bg-[#059669] h-full w-[0%]"></div>
-          </div>
-        </div>
-      </div>
+        <h3 class="font-bold text-sm text-slate-100">AI Suhbatdosh</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">Inglizcha muloqot</p>
+      </button>
 
     </div>
 
-    <!-- Kunlik Chellenj -->
-    <div class="card-base p-3 flex items-center justify-center gap-2 text-xs font-bold text-[#7A6444] opacity-80">
-      <i class="fa-solid fa-star text-amber-500 text-sm"></i>
-      <span>Kunlik chellenj</span>
-      <span class="text-[10px] text-[#A39274] font-normal"><i class="fa-solid fa-lock"></i> Tez kunda</span>
-    </div>
-  </section>
-
-  <!-- Interactive Test & Quiz Modal -->
-  <div id="quiz-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden flex items-end justify-center p-3">
-    <div class="card-base w-full max-w-md p-5 bg-white space-y-4 shadow-2xl rounded-2xl border-2 border-[#EFE6D5] max-h-[85vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-[#F0E6D2] pb-2">
-        <h3 id="quiz-modal-title" class="font-black text-sm text-[#382D1D]">Test Mashqi</h3>
-        <button onclick="closeQuizModal()" class="w-7 h-7 rounded-full bg-[#FAF5EB] text-[#A39274] hover:text-[#382D1D] flex items-center justify-center text-xs">
+    <!-- Dinamik Modul Oynasi -->
+    <section id="content-area" class="bg-slate-800/95 backdrop-blur-md p-5 rounded-3xl border border-slate-700 shadow-xl hidden transition duration-300">
+      <div class="flex justify-between items-center mb-4 border-b border-slate-700/60 pb-2">
+        <h3 id="module-title" class="font-black text-slate-100 text-sm">Bo'lim</h3>
+        <button onclick="closeModule()" class="w-7 h-7 rounded-full bg-slate-700/60 text-slate-400 hover:text-slate-200 flex items-center justify-center text-xs">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-
-      <div id="quiz-modal-body" class="space-y-3">
-        <!-- Interaktiv test mazmuni app.js orqali yuklanadi -->
+      <div id="module-body">
+        <!-- Kontent JS orqali yuklanadi -->
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Floating Translation Switch Button -->
-  <button class="fixed bottom-20 right-4 w-11 h-11 rounded-full bg-[#E5BA65] text-[#382D1D] shadow-lg flex items-center justify-center text-sm font-black border border-[#F5D899] active:scale-90 transition z-10">
-    文A
-  </button>
+  </main>
 
-  <!-- Pastki Navigatsiya Bar (5 items) -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-[#FAF5EB]/95 backdrop-blur-md border-t border-[#EFE6D5] flex justify-around py-2.5 text-[10px] text-[#A39274] font-semibold z-20">
-    <button class="flex flex-col items-center gap-0.5 text-[#382D1D] bg-[#F3E5C8] px-3 py-1 rounded-xl">
-      <i class="fa-solid fa-house text-sm"></i>
+  <!-- Pastki Navigatsiya -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 flex justify-around py-2.5 text-slate-400 font-semibold text-[11px] z-20">
+    <button onclick="closeModule()" class="flex flex-col items-center gap-1 text-amber-400">
+      <i class="fa-solid fa-house text-lg"></i>
       <span>Bosh sahifa</span>
     </button>
-    <button onclick="showInfo('O\'quv yo\'li')" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-map text-sm"></i>
-      <span>O'quv yo'li</span>
-    </button>
-    <button onclick="showInfo('Reyting')" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-chart-simple text-sm"></i>
+    <button onclick="openModule('leaderboard')" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
+      <i class="fa-solid fa-trophy text-lg"></i>
       <span>Reyting</span>
     </button>
-    <button onclick="showInfo('Profil')" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-user text-sm"></i>
+    <button onclick="openModule('profile')" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
+      <i class="fa-solid fa-user text-lg"></i>
       <span>Profil</span>
-    </button>
-    <button onclick="showInfo('Sozlamalar')" class="flex flex-col items-center gap-0.5 hover:text-[#382D1D]">
-      <i class="fa-solid fa-gear text-sm"></i>
-      <span>Sozlamalar</span>
     </button>
   </nav>
 
